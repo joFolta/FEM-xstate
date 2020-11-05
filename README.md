@@ -9,7 +9,6 @@
   - testing machine from User's point-of-view
   - user only sees the outcome, not the internal states AKA complexity
     - i.e. the patron only sees the food coming, not the complexities of the food being ordered, prepared, checked, delivered, etc.
-  - 
 - `import { createModel } from '@xstate/test';`
 - with `@testing-library/react`;
 - Where are the actual tests?
