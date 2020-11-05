@@ -1,8 +1,8 @@
-import { createMachine, assign } from 'xstate';
+import { createMachine, assign } from "xstate";
 
 const ticker = (ctx) => (sendBack) => {
   const interval = setInterval(() => {
-    sendBack('TICK');
+    sendBack("TICK");
   }, ctx.interval * 1000);
 
   return () => clearInterval(interval);
@@ -13,8 +13,8 @@ const timerExpired = (ctx) => ctx.elapsed >= ctx.duration;
 // https://xstate.js.org/viz/?gist=78fef4bd3ae520709ceaee62c0dd59cd
 export const createTimerMachine = (duration) =>
   createMachine({
-    id: 'timer',
-    initial: 'running',
+    id: "timer",
+    initial: "running",
     context: {
       duration,
       elapsed: 0,
@@ -27,28 +27,30 @@ export const createTimerMachine = (duration) =>
           elapsed: 0,
         }),
         on: {
-          TOGGLE: 'running',
+          TOGGLE: "running",
           RESET: undefined,
         },
       },
       running: {
         invoke: {
-          id: 'ticker', // only used for viz
+          id: "ticker", // only used for viz
           src: ticker,
         },
-        initial: 'normal',
+        initial: "normal",
         states: {
           normal: {
             always: {
-              target: 'overtime',
+              target: "overtime",
               cond: timerExpired,
             },
             on: {
+              // blocked
               RESET: undefined,
             },
           },
           overtime: {
             on: {
+              // blocked
               TOGGLE: undefined,
             },
           },
@@ -59,7 +61,7 @@ export const createTimerMachine = (duration) =>
               elapsed: (ctx) => ctx.elapsed + ctx.interval,
             }),
           },
-          TOGGLE: 'paused',
+          TOGGLE: "paused",
           ADD_MINUTE: {
             actions: assign({
               duration: (ctx) => ctx.duration + 60,
@@ -68,12 +70,12 @@ export const createTimerMachine = (duration) =>
         },
       },
       paused: {
-        on: { TOGGLE: 'running' },
+        on: { TOGGLE: "running" },
       },
     },
     on: {
       RESET: {
-        target: '.idle',
+        target: ".idle",
       },
     },
   });
