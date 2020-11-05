@@ -7,9 +7,19 @@ import { ProgressCircle } from "../ProgressCircle";
 import { useMachine } from "@xstate/react";
 import { timerMachine } from "./timerMachine";
 
+// Xstate inspect tool
+// also changes state of actual app
+// enable popups to visualize the machine in realtime
+import { inspect } from "@xstate/inspect";
+inspect({
+  iframe: false,
+});
+
 export const Timer = () => {
   // send is used for @xstate/react's useMachine vs dispatch for Redux/React's useReducer hook
-  const [state, send] = useMachine(timerMachine);
+  const [state, send] = useMachine(timerMachine, {
+    devTool: true,
+  });
 
   const { duration, elapsed, interval } = {
     duration: 60,
