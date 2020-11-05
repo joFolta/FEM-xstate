@@ -1,12 +1,22 @@
-import { createMachine, assign } from 'xstate';
+import { createMachine, assign } from "xstate";
 
+// Actions parameterized
 // Parameterize the assign actions here:
-// const tick = ...
-// const addMinute = ...
-// const reset = ...
+const tick = assign({
+  elapsed: (ctx, ev) => ctx.elapsed + ctx.interval,
+});
+
+const addMinute = assign({
+  duration: (ctx, ev) => ctx.duration + 60,
+});
+
+const reset = assign({
+  duration: 60,
+  elapsed: 0,
+});
 
 export const timerMachine = createMachine({
-  initial: 'idle',
+  initial: "idle",
   context: {
     duration: 60,
     elapsed: 0,
@@ -15,34 +25,31 @@ export const timerMachine = createMachine({
   states: {
     idle: {
       // Parameterize this action:
-      entry: assign({
-        duration: 60,
-        elapsed: 0,
-      }),
-
+      entry: reset,
       on: {
-        TOGGLE: 'running',
+        TOGGLE: "running",
       },
     },
     running: {
       on: {
-        // On the TICK event, the context.elapsed should be incremented by context.interval
-        // ...
-
-        TOGGLE: 'paused',
+        TICK: {
+          actions: tick,
+        },
+        TOGGLE: "paused",
         ADD_MINUTE: {
           // Parameterize this action:
-          actions: assign({
-            duration: (ctx) => ctx.duration + 60,
-          }),
+          actions: addMinute,
         },
       },
     },
     paused: {
       on: {
-        TOGGLE: 'running',
-        RESET: 'idle',
+        TOGGLE: "running",
+        RESET: "idle",
       },
     },
   },
+  // add actions HERE to make it more flexible - the consuming app can pass in it's own custom actions
+  // pass in custom actions at useMachine second param
+  // {actions: {reset, tick, addMinute}}
 });
