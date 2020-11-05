@@ -10,16 +10,20 @@ import { timerMachine } from "./timerMachine";
 // Xstate inspect tool
 // also changes state of actual app
 // enable popups to visualize the machine in realtime
-import { inspect } from "@xstate/inspect";
-inspect({
-  iframe: false,
-});
+// import { inspect } from "@xstate/inspect";
+// inspect({
+//   iframe: false,
+// });
+// also need to add devTool: true to useMachine option
 
 export const Timer = () => {
   // send is used for @xstate/react's useMachine vs dispatch for Redux/React's useReducer hook
   const [state, send] = useMachine(timerMachine, {
-    devTool: true,
+    // devTool: true,
   });
+
+  // TODO REMOVE LOG
+  console.log("state.value", state.value);
 
   const { duration, elapsed, interval } = {
     duration: 60,
@@ -54,13 +58,13 @@ export const Timer = () => {
         </div>
       </div>
       <div className="actions">
-        {state === "running" && (
+        {state.value === "running" && (
           <button onClick={() => send({ type: "TOGGLE" })} title="Pause timer">
             <FontAwesomeIcon icon={faPause} />
           </button>
         )}
 
-        {(state === "paused" || state === "idle") && (
+        {(state.value === "paused" || state.value === "idle") && (
           <button onClick={() => send({ type: "TOGGLE" })} title="Start timer">
             <FontAwesomeIcon icon={faPlay} />
           </button>
